@@ -55,8 +55,8 @@ class QuadTree:
 
         if show_quadrants:
             for child in children:
-                imgc = cv2.rectangle(compressed_image, (child.origin['y'], child.origin['x']),
-                                     (child.origin['y'] + child.height, child.origin['x'] + child.width),
+                imgc = cv2.rectangle(compressed_image, (child.origin['x'], child.origin['y']),
+                                     (child.origin['x'] + child.width, child.origin['y'] + child.height),
                                      highlight_color, 1)
 
         return compressed_image
@@ -139,6 +139,9 @@ class QuadTree:
 
         bottom_width, top_width = np.floor(quadrant.width / 2).astype(int), np.ceil(quadrant.width / 2).astype(int)
         bottom_height, top_height = np.floor(quadrant.height / 2).astype(int), np.ceil(quadrant.height / 2).astype(int)
+
+        if bottom_width < 1 or bottom_height < 1:
+            return
 
         if self.__min_quad_size and bottom_width <= self.__min_quad_size and bottom_height <= self.__min_quad_size:
             return
