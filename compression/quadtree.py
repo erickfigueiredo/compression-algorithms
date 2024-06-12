@@ -10,6 +10,7 @@ class QuadTree:
     """
     QuadTree class implementation for Image Compression.
     """
+
     def __init__(self, image: np.ndarray, threshold: int = None, min_quad_size: int = 1) -> None:
         """
         Constructor for the QuadTree class.
@@ -60,7 +61,7 @@ class QuadTree:
 
         return compressed_image
 
-    def build_compressed_file(self, save_path:str=None, filename:str=None) -> None:
+    def build_compressed_file(self, save_path: str = None, filename: str = None) -> None:
         """
         Method to build a compressed file from the quadtree. creates a file with ".lima" extension which contains the
         instructions for the compressed file construction.
@@ -76,6 +77,28 @@ class QuadTree:
         with open(os.path.join(save_path, f'{filename}.lima'), 'w') as file:
             file.write(f'{self.__image.shape[0]};{self.__image.shape[1]}&{compressed_data}')
 
+    @staticmethod
+    def parse_compressed_file(file_path: str) -> np.ndarray:
+        """
+        Static Method to parse the compressed file and build the quadtree.
+        :param file_path: Path to the compressed file.
+        :return: Parsed image.
+        """
+        if not file_path.endswith('.lima'):
+            raise ValueError('Invalid file extension!')
+
+        with open(file_path, 'r') as file:
+            data = file.read().split('&')
+
+        shape = data[0].split(';')
+        parsed_image = np.zeros((int(shape[0]), int(shape[1]), 3), dtype=np.uint8)
+
+        for quad_data in data[1:]:
+            quad = quad_data.split(';')
+            color = [int(c) for c in quad[-1].split(',')]
+            parsed_image[int(quad[1]):int(quad[3]), int(quad[0]):int(quad[2]), :] = color
+
+        return parsed_image
 
     def __get_max_depth(self, quadrant: Quadrant) -> int:
         """
