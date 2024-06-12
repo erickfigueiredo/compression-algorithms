@@ -1,5 +1,6 @@
 .idea
 images
+compressions
 
 # Compressed test files
 *.lima
