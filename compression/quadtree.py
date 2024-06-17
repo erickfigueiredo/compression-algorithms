@@ -122,11 +122,11 @@ class QuadTree:
         if not quadrant.children:
             return [quadrant]
 
-        leaves = []
+        children = []
         for child in quadrant.children:
-            leaves.extend(self.__get_children(child))
+            children.extend(self.__get_children(child))
 
-        return leaves
+        return children
 
     def __build_tree(self, quadrant: Quadrant) -> None:
         """
