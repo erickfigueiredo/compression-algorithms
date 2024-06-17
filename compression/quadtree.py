@@ -33,11 +33,11 @@ class QuadTree:
         """
         return self.__get_max_depth(self.root)
 
-    def get_chidren(self) -> list[Quadrant]:
+    def get_children(self) -> list[Quadrant]:
         """
         Getter for the leaves of the quadtree.
         """
-        return self.__get_chidren(self.root)
+        return self.__get_children(self.root)
 
     def get_compressed_image(self, show_quadrants: bool = False, highlight_color: tuple = (0, 255, 0)) -> np.ndarray:
         """
@@ -46,7 +46,7 @@ class QuadTree:
         :param highlight_color: Color to highlight the quadrants.
         """
         compressed_image = np.zeros_like(self.__image)
-        children = self.get_chidren()
+        children = self.get_children()
 
         for child in children:
             quadrant = child.get_quadrant_from_image(self.__image)
@@ -71,7 +71,7 @@ class QuadTree:
         if not (save_path and filename):
             raise ValueError('Please provide a save path and filename!')
 
-        quadrants = self.get_chidren()
+        quadrants = self.get_children()
         compressed_data = '&'.join([str(quad) for quad in quadrants])
 
         with open(os.path.join(save_path, f'{filename}.lima'), 'w') as file:
@@ -114,7 +114,7 @@ class QuadTree:
 
         return max_depth
 
-    def __get_chidren(self, quadrant: Quadrant) -> list[Quadrant]:
+    def __get_children(self, quadrant: Quadrant) -> list[Quadrant]:
         """
         Method to get the leaves of the quadtree recursively.
         :param quadrant: Quadrant to get the leaves from.
@@ -124,7 +124,7 @@ class QuadTree:
 
         leaves = []
         for child in quadrant.children:
-            leaves.extend(self.__get_chidren(child))
+            leaves.extend(self.__get_children(child))
 
         return leaves
 
@@ -143,7 +143,7 @@ class QuadTree:
         if bottom_width < 1 or bottom_height < 1:
             return
 
-        if self.__min_quad_size and bottom_width <= self.__min_quad_size and bottom_height <= self.__min_quad_size:
+        if self.__min_quad_size and (bottom_width <= self.__min_quad_size or bottom_height <= self.__min_quad_size):
             return
 
         top_left = Quadrant(quadrant.origin['x'], quadrant.origin['y'], bottom_width, bottom_height, quadrant.depth + 1)
